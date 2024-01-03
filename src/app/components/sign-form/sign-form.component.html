@@ -1,0 +1,137 @@
+<div class="ps-page--my-account">
+    <div class="ps-breadcrumb">
+        <div class="container">
+            <ul class="breadcrumb">
+                <li><a [routerLink]="['/home']">Trang chủ</a></li>
+                <li>Đăng nhập &amp; Đăng ký</li>
+            </ul>
+        </div>
+    </div>
+    <div class="ps-my-account">
+        <div class="container">
+            <form class="ps-form--account">
+                <ul class="nav nav-tabs">
+                    <li>
+                        <a href="#sign-in" class="nav-link active" data-toggle="tab" style="color: black;">Đăng nhập</a>
+                    </li>
+                    <li>
+                        <a href="#sign-up" class="nav-link" data-toggle="tab" style="color: black;">Đăng ký</a>
+                    </li>
+                </ul>
+                <div class="ps-tabs">
+                    <div class="ps-tab active" id="sign-in">
+                        <div class="ps-form__content" style="padding: 20px !important">
+                            <h5>Đăng nhập tài khoản của bạn</h5>
+                            <form class="form" [formGroup]="loginForm">
+                                <div class="form-group">
+                                    <input
+                                    [ngClass]="{'is-invalid':loginForm.get('email')?.touched && loginForm.get('email')?.invalid}"
+                                    formControlName="email"
+                                    class="form-control"
+                                    type="text"
+                                    placeholder="Email">
+                                    <small class="invalid-feedback">Email không hợp lệ</small>
+                                </div>
+                                <div class="form-group form-forgot">
+                                    <input class="form-control"
+                                    [ngClass]="{'is-invalid':loginForm.get('password')?.touched && loginForm.get('password')?.invalid}"
+                                        type="password"
+                                        [type]="show ? 'text' : 'password'"
+                                        formControlName="password"
+                                        id="password"
+                                        placeholder="Mật khẩu">
+                                        <small class="invalid-feedback">Password phải >= 6 kí tự</small>
+                                    <a><app-forgot-password></app-forgot-password></a>
+                                </div>
+                                <div class="form-group">
+                                    <div class="ps-checkbox">
+                                        <input class="form-control" type="checkbox" (click)="toggle()" id="remember-me" name="remember-me" />
+                                        <label for="remember-me">Hiện thị mật khẩu?</label>
+                                    </div>
+                                </div>
+                                <div class="form-group submtit">
+                                    <button style="position: relative; top: 10px;" (click)="signIn()" type="submit" class="ps-btn ps-btn--fullwidth">Đăng nhập</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="ps-tab" id="sign-up">
+                        <div class="ps-form__content">
+                            <h5>Đăng ký tài khoản</h5>
+                            
+                            <form class="form" [formGroup]="registerForm">
+                                <div class="form-group">
+                                    <input
+                                    [ngClass]="{'is-invalid':registerForm.get('email')?.touched && registerForm.get('email')?.invalid}"
+                                    formControlName="email"
+                                    class="form-control"
+                                    type="text"
+                                    placeholder="Nhập địa chỉ email">
+                                    <small class="invalid-feedback">Email không hợp lệ</small>
+                                </div>
+                                <div class="form-group">
+                                    <input
+                                    [ngClass]="{'is-invalid':registerForm.get('otp')?.touched && registerForm.get('otp')?.invalid}"
+                                    formControlName="otp"
+                                    maxlength="6"
+                                    name="otp" id="otp" 
+                                    class="form-control"
+                                    type="text"
+                                    placeholder="Mã xác thực OTP">
+                                    <small class="invalid-feedback">OTP phải gồm 6 kí tự trở lên</small>
+                                    <a style="font-size: 14px;"
+                                        class="btn btn-warning"
+                                        (click)="registerForm.get('email')?.valid?sendOTP():sendError()">
+                                        <span>Lấy mã xác thực OTP</span>
+                                    </a>
+                                </div>
+                                <div class="form-group">
+                                    <input
+                                    [ngClass]="{'is-invalid':registerForm.get('name')?.touched && registerForm.get('name')?.invalid}"
+                                    formControlName="name"
+                                    class="form-control"
+                                    type="text"
+                                    placeholder="Họ và tên">
+                                    <small class="invalid-feedback">Tên tài khoản phải >= 6 kí tự</small>
+                                </div>
+                                <div class="form-group">
+                                    <input
+                                    [ngClass]="{'is-invalid':registerForm.get('password')?.touched && registerForm.get('password')?.invalid}"
+                                    id="pass" [type]="show ? 'text' : 'password'"
+                                    formControlName="password"
+                                    class="form-control"
+                                    type="password"
+                                    placeholder="Mật khẩu">
+                                    <small class="invalid-feedback">Password phải >= 6 kí tự</small>
+                                    <button class="btn btn-warning" style="font-size: 14px;" type="button" (click)="toggle()"><span>Hiển thị mật khẩu?</span></button>
+                                </div>
+                                <div class="form-group">
+                                    <input
+                                    [ngClass]="{'is-invalid':registerForm.get('phone')?.touched && registerForm.get('phone')?.invalid}"
+                                    formControlName="phone"
+                                    class="form-control"
+                                    type="text"
+                                    placeholder="Số điện thoại">
+                                    <small class="invalid-feedback">Số điện thoại không hợp lệ</small>
+                                </div>
+                                <div class="form-group">
+                                    <input
+                                    [ngClass]="{'is-invalid':registerForm.get('address')?.touched && registerForm.get('address')?.invalid}"
+                                    formControlName="address"
+                                    class="form-control"
+                                    type="text"
+                                    placeholder="Địa chỉ">
+                                    <small class="invalid-feedback">Địa chỉ phải tồn tại</small>
+                                </div>
+                                <div class="form-group submtit">
+                                    <button style="position: relative; top: -10px;" type="submit" (click)="signUp()" class="ps-btn ps-btn--fullwidth">Đăng ký miễn phí</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
