@@ -65,7 +65,7 @@ export class CartComponent implements OnInit {
           if (item.product.quantity - item.quantity < 0) {
 
             Swal.fire({
-              title: `Sản phẩm ${item.product.name} vừa có thay đổi về số lượng, bạn có muốn tiếp tục mua hàng không`,
+              title: `Sản phẩm ${item.product.name} vừa có thay đổi về số lượng, bạn có muốn tiếp tục mua hàng không?`,
               icon: 'warning',
               showCancelButton: true,
               confirmButtonColor: '#3085d6',
@@ -238,7 +238,7 @@ export class CartComponent implements OnInit {
 
       if (this.cartDetail.quantity === 0) {
 
-        this.delete(id, quantity);
+        this.delete(id, quantity, this.cartDetail.product.name);
       } else {
         this.cartDetail.price = (this.cartDetail.product.price * (1 - this.cartDetail.product.discount / 100)) * this.cartDetail.quantity;
         this.cartService.updateDetail(this.cartDetail).subscribe(data => {
@@ -276,7 +276,7 @@ export class CartComponent implements OnInit {
   tempDelete(id: number, quantity: number, name: string) {
 
     Swal.fire({
-      title: `Xoá ${name} này ra khỏi giỏ hàng?`,
+      title: `Sản phẩm ${name} này đã hết hàng, chúng tôi sẽ loại bỏ nó khỏi giỏ hàng và đồng thời thêm nó vào danh mục ưu thích của bạn cho những trải nghiệm sau này nếu muốn, xin cảm ơn!!!`,
       icon: 'info',
       showCancelButton: false,
       confirmButtonColor: '#3085d6',
@@ -293,9 +293,9 @@ export class CartComponent implements OnInit {
     })
   }
 
-  delete(id: number, quantity: number) {
+  delete(id: number, quantity: number, name: string) {
     Swal.fire({
-      title: 'Bạn muốn xoá sản phẩm này ra khỏi giỏ hàng?',
+      title: `Bạn muốn xoá ${name} ra khỏi giỏ hàng?`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#3085d6',

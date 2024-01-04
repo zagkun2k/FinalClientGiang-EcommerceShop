@@ -72,7 +72,7 @@
                                     {{item.price |  number}}đ
                                 </td>
                                 <td style="text-align: center;" data-label="Actions">
-                                    <a href="javascript:void(0);" (click)="delete(item.cartDetailId, item.quantity)"><i class="icon-cross"></i></a>
+                                    <a href="javascript:void(0);" (click)="delete(item.cartDetailId, item.quantity, item.product.name)"><i class="icon-cross"></i></a>
                                 </td>
                             </tr>
                         </tbody>
