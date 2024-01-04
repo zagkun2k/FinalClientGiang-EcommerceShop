@@ -168,9 +168,7 @@ export class SearchComponent implements OnInit {
           this.cartService.setLength(this.cartDetails.length);
         })
       }, error => {
-        this.toastr.error('Sản phẩm này có thể đã hết hàng!', 'Hệ thống');
-        this.router.navigate(['/home']);
-        window.location.href = "/";
+        this.toastr.error('Sản phẩm vừa đặt đã đạt số lượng tối đa trong giỏ hàng!', 'Hệ thống');
       })
     })
   }

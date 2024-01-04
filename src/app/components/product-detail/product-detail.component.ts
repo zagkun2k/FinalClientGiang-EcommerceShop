@@ -41,6 +41,9 @@ export class ProductDetailComponent implements OnInit {
   rateAll!:Rate[];
   countRate!:number;
 
+  tempQuantity!: number;
+  addedQuantity!: number;
+
   itemsComment:number = 3;
   
   constructor(
@@ -72,10 +75,35 @@ export class ProductDetailComponent implements OnInit {
     this.id = this.route.snapshot.params['id'];
     this.rateAll = [];
     this.rates = [];
+    // this.tempQuantity = 0;
+    // this.addedQuantity = 0;
     this.getRates();
     this.getProduct();
     this.getTotalLike();
     this.getAllRate();
+    this.getCartDetails(this.id);
+  }
+
+  getCartDetails(id: number) {
+    let email = this.sessionService.getUser();
+    this.cartService.getCart(email).subscribe(data => {
+      this.cart = data as Cart;
+      this.cartService.getAllDetail(this.cart.cartId).subscribe(data => {
+        this.cartDetails = data as CartDetail[];
+        for (let item of this.cartDetails) {
+
+          if (item.product.productId === Number(id)) {
+
+              this.addedQuantity = item.quantity;
+              this.tempQuantity = item.product.quantity - item.quantity;
+          } else {
+
+            this.addedQuantity = 0;
+            this.tempQuantity = this.product.quantity;
+          }
+        }
+      })
+    })
   }
 
   setItemsComment(size: number) {
@@ -197,16 +225,18 @@ export class ProductDetailComponent implements OnInit {
 
           setTimeout(() => {
             
-            this.router.navigate(['/home']);
-            this.toastr.info('Sản phẩm vừa thêm đã hết hàng!', 'Hệ thống');
+            // this.router.navigate(['/home']);
+            this.toastr.info('Sản phẩm vừa đặt đã đạt số lượng tối đa trong giỏ hàng!', 'Hệ thống');
           }, 500);
         }
+        this.ngOnInit();
       }, error => {
-        this.router.navigate(['/home']);
+        // this.router.navigate(['/home']);
         setTimeout(() => {
 
-          this.toastr.info('Sản phẩm vừa thêm đã hết hàng!', 'Hệ thống');
+          this.toastr.info('Sản phẩm vừa đặt đã đạt số lượng tối đa trong giỏ hàng!', 'Hệ thống');
         }, 500);
+        this.ngOnInit();
       })
     })
   }

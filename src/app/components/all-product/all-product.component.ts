@@ -131,7 +131,7 @@ export class AllProductComponent implements OnInit {
         this.getProducts();
         
       }, error => {
-        this.toastr.info('Sản phẩm này có thể đã hết hàng!', 'Hệ thống');
+        this.toastr.info('Sản phẩm vừa đặt đã đạt số lượng tối đa trong giỏ hàng!', 'Hệ thống');
       })
     })
   }

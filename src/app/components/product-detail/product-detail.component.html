@@ -47,8 +47,12 @@
                                 <p style="text-decoration: underline;font-size: 16px;">Mô tả sản phẩm <strong> (Đã bán {{product.sold}} sản phẩm):</strong></p>
                                 <p>{{product.description}}</p>
                             </div>
+                            <div class="ps-product__desc" style="display: flex;">
+                                <p style="font-size: 20px; margin-right: 80px;">Số lượng đã thêm: {{addedQuantity}}</p>
+                                <p style="font-size: 20px;" [ngStyle]="{'color': tempQuantity == 0 ? 'red' : 'initial'}">Số lượng hiện còn: {{tempQuantity}}</p>
+                            </div>
                             <div class="ps-product__shopping">
-                                <a class="ps-btn ps-btn--black" href="javascript:void(0);" (click)="addCart(product.productId, product.price*(1 - product.discount/100))">Thêm Giỏ Hàng</a>
+                                <a class="ps-btn ps-btn--black" href="javascript:void(0);" [ngClass]="{'disabled-link': tempQuantity == 0}" (click)="addCart(product.productId, product.price*(1 - product.discount/100))">{{tempQuantity === 0 ? "Tạm thời hết hàng" : "Thêm vào giỏ hàng"}}</a>
                                 <div class="ps-product__actions">
                                     <a href="javascript:void(0);" (click)="toggleLike(product.productId)"><i style="color: #ffcc23;" class="icon-heart"></i></a> {{totalLike}} lượt thích
                                 </div>

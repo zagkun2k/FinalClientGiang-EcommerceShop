@@ -9,7 +9,7 @@
         </div>
     </div>
     <div class="ps-section--shopping ps-whishlist">
-        <div class="container">
+        <div class="container" style="min-width: 1500px !important;">
             <div class="ps-section__header">
                 <h1>Danh sách yêu thích</h1>
             </div>
@@ -21,13 +21,17 @@
                     <table class="table ps-table--whishlist ps-table--responsive">
                         <thead>
                             <tr>
-                                <th>#</th>
+                                <th>Số thự tự</th>
                                 <th>Sản phẩm</th>
                                 <th>Tên</th>
-                                <th>Giá</th>
-                                <th>Trạng thái</th>
-                                <th>Thêm giỏ hàng</th>
-                                <th>Hành động</th>
+                                <th>Giá gốc</th>
+                                <th>Ưu đãi hiện tại</th>
+                                <th>Giá ưu đãi</th>
+                                <!-- <th>Số lượng tạm còn</th>
+                                <th>Số lượng đã đặt</th> -->
+                                <th>Trạng thái hiện tại</th>
+                                <th>Thêm vào giỏ hàng</th>
+                                <th>Hủy</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -51,13 +55,25 @@
                                     </div>
                                 </td>
                                 <td style="text-align: center;" class="price" data-label="Price">
+                                    {{item.product.price |  number}}đ
+                                </td>
+                                <td style="text-align: center;" class="price" data-label="Price">
+                                    {{item.product.discount |  number}}%
+                                </td>
+                                <td style="text-align: center;" class="price" data-label="Price">
                                     {{item.product.price*(1 - item.product.discount/100) |  number}}đ
                                 </td>
+                                <!-- <td style="text-align: center;" class="price" data-label="Price">
+                                    {{getTempQuantityProduct(item.product.productId) |  number}}
+                                </td>
+                                <td style="text-align: center;" class="price" data-label="Price">
+                                    {{getAddedQuantityProduct(item.product.productId) |  number}}
+                                </td> -->
                                 <td style="text-align: center;" data-label="Status">
-                                    <span class="ps-tag ps-tag--in-stock">{{item.product.quantity>0?'Còn hàng': 'Hết hàng'}}</span>
+                                    <span class="ps-tag ps-tag--in-stock" [ngClass]="{'span-disabled': item.product.status === false}">{{item.product.status === false ? 'Tạm thời hết hàng': 'Còn hàng'}}</span>
                                 </td>
                                 <td style="text-align: center;" data-label="action">
-                                    <button class="ps-btn" (click)="addCart(item.product.productId, item.product.price*(1 - item.product.discount/100))" [disabled]="item.product.quantity<0">Thêm Giỏ Hàng</button>
+                                    <button class="ps-btn" [ngClass]="{'disabled-button': item.product.status === false}" (click)="addCart(item.product.productId, item.product.price*(1 - item.product.discount/100))" [disabled]="item.product.status === false">{{item.product.status === true ? "Thêm vào giỏ hàng" : "Tạm thời hết hàng"}}</button>
                                 </td>
                                 <td style="text-align: center;" data-label="Remove">
                                     <a href="javascript:void(0);" (click)="delete(item.favoriteId, item.product.name)">

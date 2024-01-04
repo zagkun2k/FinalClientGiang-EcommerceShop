@@ -22,6 +22,7 @@ export class FavoriteComponent implements OnInit {
   cart!: Cart;
   cartDetail!: CartDetail;
   cartDetails!: CartDetail[];
+  checkFlag!: boolean;
 
   page: number = 1;
 
@@ -38,9 +39,50 @@ export class FavoriteComponent implements OnInit {
       }
       window.scrollTo(0, 0)
     });
+    this.checkFlag = false;
     this.favorites = [];
     this.getAll();
   }
+
+  // getTempQuantityProduct(id: number) : number {
+
+  //   let email = this.sessionService.getUser();
+  //   let quantity = 0;
+  //   this.cartService.getCart(email).subscribe(data => {
+  //     this.cart = data as Cart;
+  //     this.cartService.getAllDetail(this.cart.cartId).subscribe(data => {
+  //       this.cartDetails = data as CartDetail[];
+  //       for (let item of this.cartDetails) {
+
+  //         if (item.product.productId === id) {
+
+  //           quantity = item.product.quantity - item.quantity;
+  //         }
+  //       }
+  //     })
+  //   })
+  //   return quantity;
+  // }
+
+  // getAddedQuantityProduct(id: number) : number {
+
+  //   let email = this.sessionService.getUser();
+  //   let quantity = 0;
+  //   this.cartService.getCart(email).subscribe(data => {
+  //     this.cart = data as Cart;
+  //     this.cartService.getAllDetail(this.cart.cartId).subscribe(data => {
+  //       this.cartDetails = data as CartDetail[];
+  //       for (let item of this.cartDetails) {
+
+  //         if (item.product.productId === id) {
+
+  //           quantity = item.quantity;
+  //         }
+  //       }
+  //     })
+  //   })
+  //   return quantity;
+  // }
 
   getAll() {
     let email = this.sessionService.getUser();
@@ -49,6 +91,26 @@ export class FavoriteComponent implements OnInit {
       this.favoriteService.setLength(this.favorites.length);
     }, error=>{
       this.toastr.error('Lỗi server', 'Hệ thống');
+    })
+
+    this.cartService.getCart(email).subscribe(data => {
+      this.cart = data as Cart;
+      this.cartService.getAllDetail(this.cart.cartId).subscribe(data => {
+        this.cartDetails = data as CartDetail[];
+        for (let item of this.cartDetails) {
+
+          if (item.quantity === item.product.quantity) {
+
+            for (let newItem of this.favorites) {
+
+              if (item.product.productId === newItem.product.productId) {
+
+                newItem.product.status = false;
+              }
+            }
+          }
+        }
+      })
     })
   }
 
@@ -90,8 +152,9 @@ export class FavoriteComponent implements OnInit {
         })
         
         let cartDetail = data as CartDetail
-        if (cartDetail.product.status === false) {
+        if (cartDetail.product.quantity === cartDetail.quantity) {
 
+          this.checkFlag = true;
           setTimeout(() => {
 
             this.toastr.info("Bạn vừa thêm sản phẩm cuối vào giỏ hàng của mình", "Hệ thống")
@@ -99,7 +162,7 @@ export class FavoriteComponent implements OnInit {
         }
         this.ngOnInit();
       }, error => {
-        this.toastr.error('Sản phẩm này đã hết hàng!', 'Hệ thống');
+        this.toastr.error('Sản phẩm vừa đặt đã đạt số lượng tối đa trong giỏ hàng!', 'Hệ thống');
       })
     })
   }

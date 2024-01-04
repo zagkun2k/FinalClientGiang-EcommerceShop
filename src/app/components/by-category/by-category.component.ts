@@ -191,7 +191,7 @@ export class ByCategoryComponent implements OnInit {
           this.ngOnInit();
         }, 1000)
       }, error => {
-        this.toastr.error('Sản phẩm này có thể đã hết hàng!', 'Hệ thống');
+        this.toastr.error('Sản phẩm vừa đặt đã đạt số lượng tối đa trong giỏ hàng!', 'Hệ thống');
         this.ngOnInit();
       })
     })

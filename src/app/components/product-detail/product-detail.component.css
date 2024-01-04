@@ -13,3 +13,35 @@
   overflow: hidden;
   color: orange;
 }
+
+.textAlert {
+
+  color: #ff3300;
+}
+
+.disabled-button {
+    
+  opacity: 0.5; 
+  background-color: gray;
+  color: black
+}
+
+.disabled-button:focus {
+  outline: none; 
+}
+
+.disabled-button:disabled {
+  cursor: not-allowed; 
+}
+
+.disabled-button:not(:disabled):hover {
+  background-color: lightgray; 
+  color: black; 
+}
+
+.disabled-link {
+  pointer-events: none;
+  color: gray;
+  text-decoration: none;
+  opacity: 0.5; 
+}

@@ -9,7 +9,7 @@
         </div>
     </div>
     <div class="ps-section--shopping ps-shopping-cart">
-        <div class="container">
+        <div class="container" style="min-width: 1800px !important;">
             <div class="ps-section__header">
                 <h1>Giỏ Hàng</h1>
             </div>
@@ -18,12 +18,15 @@
                     <table class="table ps-table--shopping-cart ps-table--responsive">
                         <thead>
                             <tr>
-                                <th>#</th>
+                                <th>Số thứ tự</th>
                                 <th>Sản phẩm</th>
-                                <th>Giá</th>
-                                <th>Số lượng</th>
+                                <th>Giá gốc</th>
+                                <th>Ưu đãi hiện tại</th>
+                                <th>Giá ưu đãi</th>
+                                <th>Số lượng tạm còn</th>
+                                <th>Số lượng hiện đặt</th>
                                 <th>Tổng tiền</th>
-                                <th>Hành động</th>
+                                <th>Hủy</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -42,7 +45,16 @@
                                     </div>
                                 </td>
                                 <td style="text-align: center;" class="price" data-label="Price">
+                                    {{item.product.price |  number}}đ
+                                </td>
+                                <td style="text-align: center;" class="price" data-label="Price">
+                                    {{item.product.discount|  number}}%
+                                </td>
+                                <td style="text-align: center;" class="price" data-label="Price">
                                     {{item.product.price*(1 - item.product.discount/100) |  number}}đ
+                                </td>
+                                <td style="text-align: center;" class="price" data-label="Price" [ngClass]="{'textAlert' : item.product.quantity - item.quantity == 0}">
+                                    {{item.product.quantity - item.quantity|  number}}
                                 </td>
                                 <td data-label="Quantity" style="text-align: center;">
                                     <input style="text-align: center;"
@@ -79,16 +91,16 @@
                     <div class="col-md-12 col-sm-12 col-12 ">
                         <div class="ps-block--shopping-total">
                             <div class="ps-block__header">
-                                <h4 class="title">Thanh toán giỏ hàng</h4>
+                                <h4 class="title">Thống kê tiền hàng</h4>
                             </div>
                             <div class="ps-block__header">
-                                <p>Tổng tiền <span> {{amountReal |  number}}đ</span></p>
-                                <p>Tiết kiệm <span> {{discount |  number}}đ</span></p>
+                                <p>Tổng tiền với giá gốc <span> {{amountReal |  number}}đ</span></p>
+                                <p>Số tiền tiết kiệm được <span> {{discount |  number}}đ</span></p>
                             </div>
                             <div class="ps-block__content">
                                 <h3>Tổng tiền phải thanh toán <span> {{amount |  number}}đ</span></h3>
                             </div>
-                        </div><a class="ps-btn ps-btn--fullwidth" [routerLink]="['/checkout']">Thanh toán</a>
+                        </div><a class="ps-btn ps-btn--fullwidth" [routerLink]="['/checkout']">Tiến hành đặt hàng</a>
                     </div>
                 </div>
             </div>
