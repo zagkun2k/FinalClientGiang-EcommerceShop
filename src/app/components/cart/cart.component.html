@@ -25,6 +25,7 @@
                                 <th>Giá ưu đãi</th>
                                 <th>Số lượng tạm còn</th>
                                 <th>Số lượng hiện đặt</th>
+                                <th>Trạng thái hiện tại</th>
                                 <th>Tổng tiền</th>
                                 <th>Hủy</th>
                             </tr>
@@ -64,6 +65,9 @@
                                     [(ngModel)]="item.quantity"
                                     (change)="update(item.cartDetailId, item.quantity)" />
                                 </td>
+                                <td style="text-align: center;" data-label="Status">
+                                    <span class="ps-tag ps-tag--in-stock" [ngClass]="{'span-disabled': item.product.status === false}">{{item.product.status === false ? 'Tạm thời hết hàng': 'Còn hàng'}}</span>
+                                </td>
                                 <td style="text-align: center;" data-label="Total">
                                     {{item.price |  number}}đ
                                 </td>
@@ -100,7 +104,7 @@
                             <div class="ps-block__content">
                                 <h3>Tổng tiền phải thanh toán <span> {{amount |  number}}đ</span></h3>
                             </div>
-                        </div><a class="ps-btn ps-btn--fullwidth" [routerLink]="['/checkout']">Tiến hành đặt hàng</a>
+                        </div><a [ngClass]="{'disabled-link': amount <= 0}" class="ps-btn ps-btn--fullwidth" [routerLink]="['/checkout']">Tiến hành đặt hàng</a>
                     </div>
                 </div>
             </div>

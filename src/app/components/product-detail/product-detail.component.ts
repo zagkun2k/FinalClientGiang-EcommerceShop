@@ -90,16 +90,23 @@ export class ProductDetailComponent implements OnInit {
       this.cart = data as Cart;
       this.cartService.getAllDetail(this.cart.cartId).subscribe(data => {
         this.cartDetails = data as CartDetail[];
-        for (let item of this.cartDetails) {
+        if (this.cartDetails.length <= 0) {
 
-          if (item.product.productId === Number(id)) {
+          this.addedQuantity = 0;
+          this.tempQuantity = this.product.quantity;
+        } else {
 
-              this.addedQuantity = item.quantity;
-              this.tempQuantity = item.product.quantity - item.quantity;
-          } else {
+          for (let item of this.cartDetails) {
 
-            this.addedQuantity = 0;
-            this.tempQuantity = this.product.quantity;
+            if (item.product.productId === Number(id)) {
+  
+                this.addedQuantity = item.quantity;
+                this.tempQuantity = item.product.quantity - item.quantity;
+            } else {
+  
+              this.addedQuantity = 0;
+              this.tempQuantity = this.product.quantity;
+            }
           }
         }
       })
