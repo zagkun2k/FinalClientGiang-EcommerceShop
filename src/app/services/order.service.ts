@@ -13,8 +13,8 @@ export class OrderService {
 
   constructor(private httpClient: HttpClient) { }
 
-  post(email: string, cart: Cart) {
-    return this.httpClient.post(this.url+'/'+email, cart);
+  post(email: string, cart: Cart, expressFee: number) {
+    return this.httpClient.post(this.url+'/'+email+'/'+expressFee, cart);
   }
 
   get(email:string) {

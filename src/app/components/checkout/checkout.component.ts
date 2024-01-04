@@ -8,6 +8,8 @@ import { CartDetail } from 'src/app/common/CartDetail';
 import { ChatMessage } from 'src/app/common/ChatMessage';
 import { Customer } from 'src/app/common/Customer';
 import { District } from 'src/app/common/District';
+import { ExpressChoice } from 'src/app/common/ExpressChoice';
+import { ExpressFee } from 'src/app/common/ExpressFee';
 import { Notification } from 'src/app/common/Notification';
 import { Order } from 'src/app/common/Order';
 import { Province } from 'src/app/common/Province';
@@ -40,15 +42,25 @@ export class CheckoutComponent implements OnInit {
   provinces!: Province[];
   districts!: District[];
   wards!: Ward[];
+  expressChoice!: ExpressChoice[];
+  expressFee!: ExpressFee;
+  expressChoiceCode!: number;
+  finalTotal!: number;
 
   province!: Province;
   district!: District;
   ward!: Ward;
 
+  warName!: string;
+  districtName!: string;
+  provinceName!: string;
+
   amountPaypal !:number;
   provinceCode!: number;
   districtCode!: number;
   wardCode!: number;
+  shopDistrictCode!: number;
+  shopId!: number;
   public payPalConfig ? : IPayPalConfig;
 
   constructor(
@@ -65,6 +77,7 @@ export class CheckoutComponent implements OnInit {
       'province': new FormControl(0, [Validators.required, Validators.min(1)]),
       'district': new FormControl(0, [Validators.required, Validators.min(1)]),
       'ward': new FormControl(0, [Validators.required, Validators.min(1)]),
+      'express': new FormControl(0, [Validators.required, Validators.min(1)]),
       'number': new FormControl('', Validators.required),
     })
   }
@@ -78,6 +91,9 @@ export class CheckoutComponent implements OnInit {
       }
       window.scrollTo(0, 0)
     });
+    this.shopDistrictCode = 3695;
+    this.shopId = 1327893;
+    this.finalTotal = 0;
     this.discount = 0;
     this.amount = 0;
     this.amountPaypal = 0;
@@ -98,6 +114,7 @@ export class CheckoutComponent implements OnInit {
         'province': new FormControl(0, [Validators.required, Validators.min(1)]),
         'district': new FormControl(0, [Validators.required, Validators.min(1)]),
         'ward': new FormControl(0, [Validators.required, Validators.min(1)]),
+        'express': new FormControl(0, [Validators.required, Validators.min(1)]),
         'number': new FormControl('', Validators.required),
       })
       this.cartService.getAllDetail(this.cart.cartId).subscribe(data => {
@@ -113,7 +130,8 @@ export class CheckoutComponent implements OnInit {
         })
         this.discount = this.amount - this.amountReal;
 
-        this.amountPaypal = (this.amount/24230); // arcording to currency market 09/12/2023
+        this.amountPaypal = (this.amount/24230) + this.finalTotal; // arcording to currency market 09/12/2023
+        this.amount += this.finalTotal;
       });
     });
   }
@@ -137,11 +155,11 @@ export class CheckoutComponent implements OnInit {
           let email = this.sessionService.getUser();
           this.cartService.getCart(email).subscribe(data => {
             this.cart = data as Cart;
-            this.cart.address = this.postForm.value.number + ', ' + this.ward.name + ', ' + this.district.name + ', ' + this.province.name;
+            this.cart.address = this.postForm.value.number + ', ' + this.warName + ', ' + this.districtName + ', ' + this.provinceName;
             this.cart.phone = this.postForm.value.phone;
             this.cartService.updateCart(email, this.cart).subscribe(data => {
               this.cart = data as Cart;
-              this.orderService.post(email, this.cart).subscribe(data => {
+              this.orderService.post(email, this.cart, this.finalTotal).subscribe(data => {
                 let order:Order = data as Order;
                 this.sendMessage(order.ordersId);
                 Swal.fire(
@@ -175,43 +193,71 @@ export class CheckoutComponent implements OnInit {
 
   getProvinces() {
     this.location.getAllProvinces().subscribe(data => {
-      this.provinces = data as Province[];
+      this.provinces = data.data as Province[];
     })
   }
 
   getDistricts() {
     this.location.getDistricts(this.provinceCode).subscribe(data => {
-      this.province = data as Province;
-      this.districts = this.province.districts;
+      this.districts = data.data as District[];
     })
   }
 
   getWards() {
     this.location.getWards(this.districtCode).subscribe(data => {
-      this.district = data as District;
-      this.wards = this.district.wards;
+      this.wards = data.data as Ward[];
     })
   }
 
-  getWard() {
-    this.location.getWard(this.wardCode).subscribe(data => {
-      this.ward = data as Ward;
+  getExpressService() {
+    this.location.getExpress(this.districtCode, this.shopDistrictCode, this.shopId).subscribe(data => {
+      this.expressChoice = data.data as ExpressChoice[];
     })
   }
+
+  getExpressFee() {
+    this.location.getExpressFee(this.expressChoiceCode, this.shopDistrictCode, this.wardCode, this.districtCode, this.amount).subscribe(data => {
+      if (typeof data.data === "undefined") {
+
+        this.expressFee = data as ExpressFee;
+      } else {
+
+        this.expressFee = data.data as ExpressFee;
+      }
+      this.finalTotal = this.expressFee.total;
+    })
+  }
+
+  // getWard() {
+  //   // this.location.getWard(this.wardCode).subscribe(data => {
+  //   //   this.ward = data as Ward;
+  //   // })
+  // }
 
   setProvinceCode(code: any) {
     this.provinceCode = code.value;
+    let provinceCurrent = this.provinces.find(item => item.ProvinceID === Number(this.provinceCode))?.ProvinceName;
+    this.provinceName = provinceCurrent + "";
     this.getDistricts();
   }
 
   setDistrictCode(code: any) {
     this.districtCode = code.value;
+    let districtCurrent = this.districts.find(item => item.DistrictID === Number(this.districtCode))?.DistrictName;
+    this.districtName = districtCurrent + "";
     this.getWards();
   }
 
   setWardCode(code: any) {
     this.wardCode = code.value;
-    this.getWard();
+    let wardCurrent = this.wards.find(item => item.WardCode === this.wardCode)?.WardName;
+    this.warName = wardCurrent + "";
+    this.getExpressService();
+  }
+
+  setExpressChoiceCode(code: any) {
+    this.expressChoiceCode = code.value;
+    this.getExpressFee();
   }
 
   private checkOutPaypal(): void {
@@ -254,11 +300,11 @@ export class CheckoutComponent implements OnInit {
               let email = this.sessionService.getUser();
               this.cartService.getCart(email).subscribe(data => {
                 this.cart = data as Cart;
-                this.cart.address = this.postForm.value.number + ', ' + this.ward.name + ', ' + this.district.name + ', ' + this.province.name;
+                this.cart.address = this.postForm.value.number + ', ' + this.warName + ', ' + this.districtName + ', ' + this.provinceName;
                 this.cart.phone = this.postForm.value.phone;
                 this.cartService.updateCart(email, this.cart).subscribe(data => {
                   this.cart = data as Cart;
-                  this.orderService.post(email, this.cart).subscribe(data => {
+                  this.orderService.post(email, this.cart, this.finalTotal).subscribe(data => {
                     let order:Order = data as Order;
                     this.sendMessage(order.ordersId);
                     Swal.fire(

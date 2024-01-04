@@ -46,7 +46,7 @@
                                         <select style="font-size: 14px;" class="product-short-select custom-select" id="province" (change)="setProvinceCode($event.target)" formControlName="province"
                                         [ngClass]="{'is-invalid':postForm.get('province')?.touched && postForm.get('province')?.invalid}">
                                             <option value="0" selected disabled>Chọn tỉnh thành</option>
-                                            <option *ngFor="let item of provinces" [value]="item.code">{{item.name}}</option>
+                                            <option *ngFor="let item of provinces" [value]="item.ProvinceID">{{item.ProvinceName}}</option>
                                         </select>
                                         <small class="invalid-feedback">Hãy chọn tỉnh thành của bạn</small>
                                     </div>
@@ -58,7 +58,7 @@
                                         <select style="font-size: 14px;" class="product-short-select custom-select" id="district" (change)="setDistrictCode($event.target)" formControlName="district"
                                         [ngClass]="{'is-invalid':postForm.get('district')?.touched && postForm.get('district')?.invalid}">
                                         <option value="0" selected disabled>Chọn huyện/thành phố</option>
-                                        <option *ngFor="let item of districts" [value]="item.code">{{item.name}}</option>
+                                        <option *ngFor="let item of districts" [value]="item.DistrictID">{{item.DistrictName}}</option>
                                         </select>
                                         <small class="invalid-feedback">Hãy chọn huyện/thành phố của bạn</small>
                                     </div>
@@ -70,7 +70,7 @@
                                         <select style="font-size: 14px;" class="product-short-select custom-select" id="ward" (change)="setWardCode($event.target)" formControlName="ward"
                                             [ngClass]="{'is-invalid':postForm.get('ward')?.touched && postForm.get('ward')?.invalid}">
                                             <option value="0" selected disabled>Chọn phường/xã</option>
-                                            <option *ngFor="let item of wards" [value]="item.code">{{item.name}}</option>
+                                            <option *ngFor="let item of wards" [value]="item.WardCode">{{item.WardName}}</option>
                                         </select>
                                         <small class="invalid-feedback">Hãy chọn phường/xã của bạn</small>
                                     </div>
@@ -85,6 +85,18 @@
                                         formControlName="number"
                                         [ngClass]="{'is-invalid':postForm.get('number')?.touched && postForm.get('number')?.invalid}" placeholder="Số nhà">
                                         <small class="invalid-feedback">Hãy nhập số nhà của bạn</small>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Chọn phương thức vận chuyển<sup>*</sup>
+                                    </label>
+                                    <div class="form-group__content">
+                                        <select style="font-size: 14px;" class="product-short-select custom-select" id="express" (change)="setExpressChoiceCode($event.target)" formControlName="express"
+                                            [ngClass]="{'is-invalid':postForm.get('express')?.touched && postForm.get('express')?.invalid}">
+                                            <option value="0" selected disabled>Chọn phương thức vận chuyển</option>
+                                            <option *ngFor="let item of expressChoice" [value]="item.service_id">{{item.short_name}}</option>
+                                        </select>
+                                        <small class="invalid-feedback">Hãy chọn phương thức vận chuyển</small>
                                     </div>
                                 </div>
                                 <h3 class="mt-40"> Thông tin bổ sung</h3>
@@ -119,7 +131,8 @@
                                             </table>
                                             <h4 class="ps-block__title">Tổng tiền: <span> {{amountReal |  number}}đ</span></h4>
                                             <h4 class="ps-block__title">Tiết kiệm: <span> {{discount |  number}}đ</span></h4>
-                                            <h3>Tổng tiền phải thanh toán: <span style="color: red;padding-left: 40px;"> {{amount |  number}}đ</span></h3>
+                                            <h4 class="ps-block__title">Phí vận chuyển: <span> {{finalTotal === 0 ? "Miễn phí giao hàng" : finalTotal |  number}}{{finalTotal === 0 ?"":"đ"}}</span></h4>
+                                            <h3>Tổng tiền phải thanh toán: <span style="color: red;padding-left: 40px;"> {{finalTotal === 0 ? (amount | number) : (amount + finalTotal |  number)}}đ</span></h3>
                                         </div>
                                     </div>
                                     <p style="text-align: center;">Thanh toán khi nhận hàng</p>
