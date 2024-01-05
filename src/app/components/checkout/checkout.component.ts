@@ -130,7 +130,7 @@ export class CheckoutComponent implements OnInit {
         })
         this.discount = this.amount - this.amountReal;
 
-        this.amountPaypal = (this.amount/24230) + this.finalTotal; // arcording to currency market 09/12/2023
+        this.amountPaypal = (this.amount + this.finalTotal) / 24400; // arcording to currency market 04/1/2024
         this.amount += this.finalTotal;
       });
     });
@@ -225,6 +225,8 @@ export class CheckoutComponent implements OnInit {
         this.expressFee = data.data as ExpressFee;
       }
       this.finalTotal = this.expressFee.total;
+      // this.getAllItem();
+      this.amountPaypal = (this.amount + this.finalTotal) / 24400; // arcording to currency market 04/1/2024
     })
   }
 
@@ -337,6 +339,5 @@ export class CheckoutComponent implements OnInit {
             console.log('onClick', data, actions);
         },
     };
-}
-
+  }
 }
