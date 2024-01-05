@@ -217,14 +217,17 @@ export class CheckoutComponent implements OnInit {
 
   getExpressFee() {
     this.location.getExpressFee(this.expressChoiceCode, this.shopDistrictCode, this.wardCode, this.districtCode, this.amount).subscribe(data => {
-      if (typeof data.data === "undefined") {
+      // if (typeof data.data === "undefined") {
 
-        this.expressFee = data as ExpressFee;
-      } else {
+      //   this.expressFee = data as ExpressFee;
+      // } else {
 
-        this.expressFee = data.data as ExpressFee;
-      }
-      this.finalTotal = this.expressFee.total;
+      this.expressFee = data.data as ExpressFee;
+      let orderCodeArray : string[] = [];
+      orderCodeArray.push(this.expressFee.order_code);
+      this.location.cancelOrder(orderCodeArray).subscribe(data => {});
+      // }
+      this.finalTotal = this.expressFee.total_fee;
       // this.getAllItem();
       this.amountPaypal = (this.amount + this.finalTotal) / 24400; // arcording to currency market 04/1/2024
     })

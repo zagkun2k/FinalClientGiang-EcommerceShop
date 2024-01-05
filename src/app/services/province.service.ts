@@ -18,6 +18,9 @@ export class ProvinceService {
   express = "https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/available-services";
   fee = "https://online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/fee";
 
+  newFee = "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/shipping-order/create";
+  cancelOrderAPI = "https://dev-online-gateway.ghn.vn/shiip/public-api/v2/switch-status/cancel";
+
   // province = 'https://provinces.open-api.vn/api/p/';
   // district = 'https://provinces.open-api.vn/api/d/';  
   // ward = 'https://provinces.open-api.vn/api/w/';
@@ -32,7 +35,6 @@ export class ProvinceService {
       'token': '9ac7d78e-ab11-11ee-893f-b6ed573185af'
     });
 
-    // Gọi API với tiêu đề và dữ liệu JSON
     return this.http.get(this.provinces, { headers });
   }
 
@@ -44,10 +46,8 @@ export class ProvinceService {
       'token': '9ac7d78e-ab11-11ee-893f-b6ed573185af'
     });
 
-    // Chuyển đổi dữ liệu JSON thành chuỗi query
     const params = new HttpParams().set('province_id', code);
 
-    // Gọi API với tiêu đề và dữ liệu JSON
     return this.http.get(this.districts, { headers, params });
   }
 
@@ -59,11 +59,24 @@ export class ProvinceService {
       'token': '9ac7d78e-ab11-11ee-893f-b6ed573185af'
     });
 
-    // Chuyển đổi dữ liệu JSON thành chuỗi query
     const params = new HttpParams().set('district_id', code);
 
-    // Gọi API với tiêu đề và dữ liệu JSON
     return this.http.get(this.wards, { headers, params });
+  }
+
+  cancelOrder(orderCode: string[]) {
+
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'token': '6f301080-ab8b-11ee-a6e6-e60958111f48',
+      'shop_id': '190735'
+    });
+
+    const data = {
+      'order_codes': orderCode 
+    };
+
+    return this.http.post(this.cancelOrderAPI, data, { headers })
   }
 
   getExpressFee(expressChoiceCode: number, shopDistrictCode: number, wardCode: number, districtCode: number, amount: number) : Observable<any> {
@@ -71,37 +84,40 @@ export class ProvinceService {
 
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'token': '9ac7d78e-ab11-11ee-893f-b6ed573185af'
+      'token': '6f301080-ab8b-11ee-a6e6-e60958111f48',
+      'shop_id': '190735'
     });
 
-    // Chuyển đổi dữ liệu JSON thành chuỗi query
-    const params = new HttpParams()
-      .set('service_id', expressChoiceCode)
-      .set('insurance_value', amount)
-      .set('coupon', "")
-      .set('from_district_id', shopDistrictCode)
-      .set('to_district_id', districtCode)
-      .set('to_ward_code', wardCode)
-      .set('height', 15)
-      .set('length', 15)
-      .set('weight', 1000)
-      .set('width', 15);
+      const data = {
+        "payment_type_id": 2,
+        "required_note": "KHONGCHOXEMHANG",
+        "from_name": "Chủ Shop Giang's Ecommerce",
+        "from_phone": "0979022704",
+        "from_address": "29 Đỗ Xuân Hợp, P. Phước Long B, TP Thủ Đức, Hồ Chí Minh",
+        "from_ward_name": "P. Phước Long B",
+        "from_district_name": "TP Thủ Đức",
+        "from_province_name": "HCM",
+        "to_name": "Khách hàng Giang Lê",
+        "to_phone": "0979022704",
+        "to_address": "Thôn Vạn Trung, Xã Phổ Phong, Huyện Đức Phổ, Quảng Ngãi",
+        "to_ward_code": `${wardCode}`,
+        "to_district_id": Number(districtCode),
+        "cod_amount": 10000,
+        "weight": 200,
+        "length": 1,
+        "width": 19,
+        "height": 10,
+        "service_type_id": Number(expressChoiceCode), // Thay service_id bằng service_type_id
+        "items": [
+          {
+            "name": "Sản phẩm Điện thoại testing",
+            "quantity": 100,
+            "weight": 1200
+          }
+        ]
+      };
 
-    // Gọi API với tiêu đề và dữ liệu JSON
-    return this.http.get(this.fee, { headers, params }).pipe(
-      catchError((error) => {
-        if (error.status === 400) {
-          // Xử lý lỗi 400 ở đây (hoặc trả về thông báo lỗi)
-          console.error('Bad Request:', error);
-          const defaultFee: ExpressFee = {
-            total: 0,
-            service_fee: 0
-          };
-          return [defaultFee];
-        }
-        // Chuyển lỗi để Observable khác xử lý (nếu cần)
-        return throwError(error);
-      }));
+    return this.http.post(this.newFee, data, { headers })
   }
 
   getExpress(districtCode: number, shopDistrictCode: number, shopId: number) : Observable<any> {
@@ -112,14 +128,12 @@ export class ProvinceService {
       'token': '9ac7d78e-ab11-11ee-893f-b6ed573185af'
     });
 
-    // Chuyển đổi dữ liệu JSON thành chuỗi query
     const params = new HttpParams()
       .set('shop_id', shopId)
       .set('from_district', shopDistrictCode)
       .set('to_district', districtCode);
 
 
-    // Gọi API với tiêu đề và dữ liệu JSON
     return this.http.get(this.express, { headers, params });
   }
 

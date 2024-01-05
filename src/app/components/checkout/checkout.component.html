@@ -94,7 +94,7 @@
                                         <select style="font-size: 14px;" class="product-short-select custom-select" id="express" (change)="setExpressChoiceCode($event.target)" formControlName="express"
                                             [ngClass]="{'is-invalid':postForm.get('express')?.touched && postForm.get('express')?.invalid}">
                                             <option value="0" selected disabled>Chọn phương thức vận chuyển</option>
-                                            <option *ngFor="let item of expressChoice" [value]="item.service_id">{{item.short_name}}</option>
+                                            <option *ngFor="let item of expressChoice" [value]="item.service_type_id">{{item.short_name}}</option>
                                         </select>
                                         <small class="invalid-feedback">Hãy chọn phương thức vận chuyển</small>
                                     </div>
@@ -131,7 +131,7 @@
                                             </table>
                                             <h4 class="ps-block__title">Tổng tiền: <span> {{amountReal |  number}}đ</span></h4>
                                             <h4 class="ps-block__title">Tiết kiệm: <span> {{discount |  number}}đ</span></h4>
-                                            <h4 class="ps-block__title">Phí vận chuyển: <span> {{finalTotal === 0 ? "Miễn phí giao hàng" : finalTotal |  number}}{{finalTotal === 0 ?"":"đ"}}</span></h4>
+                                            <h4 class="ps-block__title">Phí vận chuyển: <span [ngClass]="{'alertText': finalTotal === 0}"> {{finalTotal === 0 ? "Chưa chọn phương thức vận chuyển" : finalTotal |  number}}{{finalTotal === 0 ?"":"đ"}}</span></h4>
                                             <h3>Tổng tiền phải thanh toán: <span style="color: red;padding-left: 40px;"> {{finalTotal === 0 ? (amount | number) : (amount + finalTotal |  number)}}đ</span></h3>
                                         </div>
                                     </div>
